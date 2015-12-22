@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="estate.entity.database.UserBillEntity" table="user_bill" schema="" catalog="PropertySystem">
+        <id name="id">
+            <column name="ub_id" sql-type="int unsigned" not-null="true"/>
+            <generator class="identity"/>
+        </id>
+        <property name="billSeris">
+            <column name="bill_seris" sql-type="varchar" length="50"/>
+        </property>
+        <property name="phone">
+            <column name="phone" sql-type="varchar" length="15"/>
+        </property>
+        <property name="propertyBill">
+            <column name="property_bill" sql-type="varchar"/>
+        </property>
+        <property name="serviceBill">
+            <column name="service_bill" sql-type="varchar"/>
+        </property>
+        <property name="parklotBill">
+            <column name="parklot_bill" sql-type="varchar"/>
+        </property>
+        <property name="updateTime">
+            <column name="update_time" sql-type="bigint"/>
+        </property>
+        <property name="payStatus">
+            <column name="pay_status" sql-type="tinyint"/>
+        </property>
+        <property name="payType">
+            <column name="pay_type" sql-type="tinyint"/>
+        </property>
+        <property name="payTime">
+            <column name="pay_time" sql-type="bigint"/>
+        </property>
+        <property name="overdueFee">
+            <column name="overdue_fee" sql-type="decimal" precision="11" scale="2"/>
+        </property>
+    </class>
+</hibernate-mapping>

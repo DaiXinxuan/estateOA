@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="utf-8">
+		<title>物业管理系统</title>
+		<meta name="description" content="description">
+		<meta name="author" content="kangbiao">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link href="plugins/bootstrap/bootstrap.css" rel="stylesheet">
+		<link href="plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet">
+		<link href="css/font-awesome.css" rel="stylesheet">
+		<link href="plugins/fancybox/jquery.fancybox.css" rel="stylesheet">
+		<link href="plugins/fullcalendar/fullcalendar.css" rel="stylesheet">
+		<link href="plugins/xcharts/xcharts.min.css" rel="stylesheet">
+		<link href="plugins/select2/select2.css" rel="stylesheet">
+		<link href="css/style.css" rel="stylesheet">
+		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!--[if lt IE 9]>
+				<script src="http://getbootstrap.com/docs-assets/js/html5shiv.js"></script>
+				<script src="http://getbootstrap.com/docs-assets/js/respond.min.js"></script>
+		<![endif]-->
+	</head>
+<body>
+<!--Start Header-->
+<div id="screensaver">
+	<canvas id="canvas"></canvas>
+	<i class="fa fa-lock" id="screen_unlock"></i>
+</div>
+<div id="modalbox">
+	<div class="devoops-modal">
+		<div class="devoops-modal-header">
+			<div class="modal-header-name">
+				<span>Basic table</span>
+			</div>
+			<div class="box-icons">
+				<a class="close-link">
+					<i class="fa fa-times"></i>
+				</a>
+			</div>
+		</div>
+		<div class="devoops-modal-inner">
+		</div>
+		<div class="devoops-modal-bottom">
+		</div>
+	</div>
+</div>
+<header class="navbar">
+	<div class="container-fluid expanded-panel">
+		<div class="row">
+			<div id="logo" class="col-xs-12 col-sm-2">
+				<a href="index.html">物业管理系统</a>
+			</div>
+			<div id="top-panel" class="col-xs-12 col-sm-10">
+				<div class="row">
+					<div class="col-xs-1 col-sm-1">
+						<a href="#" class="show-sidebar">
+						  <i class="fa fa-bars"></i>
+						</a>
+					</div>
+                    <div class="col-xs-8 col-sm-5 top-panel-right">
+                        <!--<label for="villageTopList">当前园区:</label>-->
+                        <!--<select class="select" style="width: 200px;" id="villageTopList">-->
+                        <!--</select>-->
+                    </div>
+					<div class="col-xs-3 col-sm-6 top-panel-right">
+						<ul class="nav navbar-nav pull-right panel-menu">
+							<li class="dropdown">
+								<a href="#" class="dropdown-toggle account" data-toggle="dropdown">
+									<div class="avatar">
+									</div>
+									<i class="fa fa-angle-down pull-right"></i>
+									<div class="user-mini pull-right">
+										<span class="welcome">欢迎您,</span>
+										<span id="name"></span>
+									</div>
+								</a>
+								<ul class="dropdown-menu">
+									<li>
+										<a href="javascript:showProfile()">
+											<i class="fa fa-user"></i>
+											<span>个人资料</span>
+										</a>
+									</li>
+                                    <li>
+                                        <a id="locked-screen" class="submenu" href="#">
+                                            <i class="fa fa-lock"></i>
+                                            <span>锁定屏幕</span>
+                                        </a>
+                                    </li>
+									<li>
+										<a href="javascript:loginOut()">
+											<i class="fa fa-power-off"></i>
+											<span>登出</span>
+										</a>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</header>
+<!--End Header-->
+<!--Start Container-->
+<div id="main" class="container-fluid">
+	<div class="row">
+		<div id="sidebar-left" class="col-xs-2 col-sm-2">
+			<ul class="nav main-menu">
+				<!--<li>-->
+					<!--<a href="ajax/dashboard.html" class="active ajax-link">-->
+						<!--<i class="fa fa-dashboard"></i>-->
+						<!--<span class="hidden-xs">系统首页</span>-->
+					<!--</a>-->
+				<!--</li>-->
+				<!--<li class="dropdown">-->
+					<!--<a href="#" class="dropdown-toggle">-->
+						<!--<i class="fa fa-building-o"></i>-->
+						<!--<span class="hidden-xs">物业管理</span>-->
+					<!--</a>-->
+					<!--<ul class="dropdown-menu">-->
+						<!--<li><a class="ajax-link" href="ajax/propertyList.html">物业信息</a></li>-->
+						<!--<li><a class="ajax-link" href="ajax/villageList.html">园区信息</a></li>-->
+						<!--<li><a class="ajax-link" href="ajax/buildingList.html">楼栋信息</a></li>-->
+						<!--<li><a class="ajax-link" href="ajax/addProperty.html">增加物业</a></li>-->
+					<!--</ul>-->
+				<!--</li>-->
+				<!--<li class="dropdown">-->
+					<!--<a href="#" class="dropdown-toggle">-->
+						<!--<i class="fa fa-truck"></i>-->
+						<!--<span class="hidden-xs">车位管理</span>-->
+					<!--</a>-->
+					<!--<ul class="dropdown-menu">-->
+						<!--<li><a class="ajax-link" href="ajax/parkingLotList.html">车位信息</a></li>-->
+						<!--<li><a class="ajax-link" href="ajax/brakeList.html">道闸信息</a></li>-->
+					<!--</ul>-->
+				<!--</li>-->
+				<!--<li class="dropdown">-->
+					<!--<a href="#" class="dropdown-toggle">-->
+						<!--<i class="fa fa-users"></i>-->
+						<!--<span class="hidden-xs">用户管理</span>-->
+					<!--</a>-->
+					<!--<ul class="dropdown-menu">-->
+						<!--<li><a class="ajax-link" href="ajax/ownerList.html">住户清单</a></li>-->
+						<!--<li><a class="ajax-link" href="ajax/appUserList.html">APP账号管理</a></li>-->
+					<!--</ul>-->
+				<!--</li>-->
+				<!--<li class="dropdown">-->
+					<!--<a href="#" class="dropdown-toggle">-->
+						<!--<i class="fa fa-cny"></i>-->
+						 <!--<span class="hidden-xs">缴费管理</span>-->
+					<!--</a>-->
+					<!--<ul class="dropdown-menu">-->
+						<!--<li><a class="ajax-link" href="ajax/billInfo.html">缴费清单</a></li>-->
+						<!--<li><a class="ajax-link" href="ajax/estateFeeList.html">物业管理费</a></li>-->
+                        <!--<li><a class="ajax-link" href="ajax/serviceFeeList.html">物业服务费</a></li>-->
+                        <!--<li><a class="ajax-link" href="ajax/parkingLotFeeList.html">车位管理费</a></li>-->
+					<!--</ul>-->
+				<!--</li>-->
+				<!--<li class="dropdown">-->
+					<!--<a href="#" class="dropdown-toggle">-->
+						<!--<i class="fa fa-bullhorn"></i>-->
+						<!--<span class="hidden-xs">公告管理</span>-->
+					<!--</a>-->
+					<!--<ul class="dropdown-menu">-->
+						<!--<li><a class="ajax-link" href="ajax/noticeAdd.html">新增公告</a></li>-->
+						<!--<li><a class="ajax-link" href="ajax/noticeList.html">历史公告</a></li>-->
+					<!--</ul>-->
+				<!--</li>-->
+				<!--<li class="dropdown">-->
+					<!--<a href="#" class="dropdown-toggle">-->
+						<!--<i class="fa fa-wrench"></i>-->
+						<!--<span class="hidden-xs">投诉报修</span>-->
+					<!--</a>-->
+					<!--<ul class="dropdown-menu">-->
+						<!--<li><a class="ajax-link" href="ajax/complain.html">投诉</a></li>-->
+						<!--<li><a class="ajax-link" href="ajax/repair.html">报修</a></li>-->
+					<!--</ul>-->
+				<!--</li>-->
+				<!--<li class="dropdown">-->
+					<!--<a href="#" class="dropdown-toggle">-->
+						<!--<i class="fa fa-lock"></i>-->
+						<!--<span class="hidden-xs">YunPass管理</span>-->
+					<!--</a>-->
+					<!--<ul class="dropdown-menu">-->
+						<!--<li><a class="ajax-link" href="ajax/secretConfig.html">密钥导入</a></li>-->
+						<!--<li><a class="ajax-link" href="ajax/secretList.html">密钥查看</a></li>-->
+					<!--</ul>-->
+				<!--</li>-->
+				<!--<li class="dropdown">-->
+					<!--<a href="#" class="dropdown-toggle">-->
+						<!--<i class="fa fa-user"></i>-->
+						<!--<span class="hidden-xs">后台用户管理</span>-->
+					<!--</a>-->
+					<!--<ul class="dropdown-menu">-->
+						<!--<li><a class="ajax-link" href="ajax/userGroup.html">用户组</a></li>-->
+						<!--<li><a class="ajax-link" href="ajax/adminUser.html">用户</a></li>-->
+					<!--</ul>-->
+				<!--</li>-->
+			</ul>
+		</div>
+		<!--Start Content-->
+		<div id="content" style="position: absolute;right: 0" class="col-xs-12 col-sm-10">
+			<div class="preloader">
+				<img src="img/devoops_getdata.gif" class="devoops-getdata" alt="preloader"/>
+			</div>
+			<div id="ajax-content"></div>
+		</div>
+		<!--End Content-->
+	</div>
+</div>
+<div class="modal fade" role="dialog" id="profileModal">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">个人资料</h4>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12" id="editSecret">
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li role="presentation" class="active"><a href="#profileTab" aria-controls="profileTab" role="tab" data-toggle="tab">个人资料</a></li>
+                                <li role="presentation"><a href="#passwordTab" aria-controls="passwordTab" role="tab" data-toggle="tab">修改密码</a></li>
+                            </ul>
+
+                            <!-- Tab panes -->
+                            <div class="tab-content">
+                                <div role="tabpanel" class="tab-pane active" id="profileTab">
+                                    <br/><br/>
+                                    <ul class="list-group">
+                                        <li class="list-group-item" id="phone"></li>
+                                        <li class="list-group-item" id="name"></li>
+                                        <li class="list-group-item" id="email"></li>
+                                        <li class="list-group-item" id="group"></li>
+                                    </ul>
+                                </div>
+                                <div role="tabpanel" class="tab-pane" id="passwordTab">
+                                    <br/><br/>
+                                    <form id="changePasswordForm" method="post" class="form-horizontal">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">原密码</label>
+                                            <div class="col-sm-8">
+                                                <input type="password" class="form-control" id="oldPassword" name="oldPassword"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">新密码</label>
+                                            <div class="col-sm-8">
+                                                <input type="password" class="form-control" id="password" name="password"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">确认新密码</label>
+                                            <div class="col-sm-8">
+                                                <input type="password" class="form-control" name="confirmPassword"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-9 col-sm-offset-2">
+                                                <button type="submit" class="btn btn-primary">提交</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<!--End Container-->
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<!--<script src="http://code.jquery.com/jquery.js"></script>-->
+<script src="plugins/jquery/jquery-2.1.0.min.js"></script>
+<script src="plugins/jquery-ui/jquery-ui.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="plugins/bootstrap/bootstrap.min.js"></script>
+<script src="plugins/justified-gallery/jquery.justifiedgallery.min.js"></script>
+<script src="plugins/tinymce/tinymce.min.js"></script>
+<script src="plugins/tinymce/jquery.tinymce.min.js"></script>
+<!-- All functions for this theme + document.ready processing -->
+
+<script src="js/config.js"></script>
+<script src="js/jquerymd5.js"></script>
+<script src="js/devoops.js"></script>
+<script type="text/javascript">
+    function showProfile()
+    {
+        $("#profileModal").modal("show");
+        LoadBootstrapValidatorScript(passwordValidator);
+    }
+    function passwordValidator() {
+        $('#changePasswordForm').bootstrapValidator({
+            message: '存在非法输入',
+            fields: {
+                oldPassword:{
+                    validators: {
+                        notEmpty: {
+                            message: '请输入原密码'
+                        }
+                    }
+                },
+                password: {
+                    validators: {
+                        notEmpty: {
+                            message: '请输入新密码'
+                        },
+                        identical: {
+                            field: 'confirmPassword',
+                            message: '两次密码不一致'
+                        }
+                    }
+                },
+                confirmPassword: {
+                    validators: {
+                        notEmpty: {
+                            message: '请再次输入新密码'
+                        },
+                        identical: {
+                            field: 'password',
+                            message: '两次密码不一致'
+                        }
+                    }
+                }
+            }
+        }).on("success.form.bv",function(e){
+            e.preventDefault();
+            submitChangePasswordForm();
+        });
+    }
+    function submitChangePasswordForm()
+    {
+        var oldPassword= $.md5($("#changePasswordForm #oldPassword").val());
+        var newPassword= $.md5($("#changePasswordForm #password").val());
+        $.ajax({
+            type: "post",
+            async: true,
+            url: urlConfig.changePassword,
+            data: {
+                oldPassword:oldPassword,
+                newPassword:newPassword
+            },
+            dataType: "json", //返回数据形式为json
+            success: function (result) {
+                if (result.status) {
+                    alert("修改成功,请重新登陆");
+                    window.location.href=urlConfig.home+"/login.html";
+                }
+                else
+                {
+                    alert(result.errorMsg.description);
+                }
+            },
+            error: function () {
+                alert("服务器连接失败,请重试!");
+            }
+        });
+    }
+
+
+
+    function loginOut()
+    {
+        $.ajax({
+            type: "get",
+            async: true,
+            url: urlConfig.loginOut,
+            dataType: "json", //返回数据形式为json
+            success: function (result) {
+                if(result.status)
+                {
+                    window.location.href=urlConfig.home+"/login.html";
+                }
+                else
+                {
+                    alert("服务器异常");
+                }
+            },
+            error: function () {
+                alert("服务器异常");
+            }
+        });
+    }
+	window.setInterval(keepSession, 60000);
+	function keepSession()
+	{
+        $.ajax({
+            type: "get",
+            async: true,
+            url: urlConfig.keepSession,
+            dataType: "json", //返回数据形式为json
+            success: function (result) {
+            },
+            error: function () {
+            }
+        });
+	}
+	$(document).ready(function() {
+        $.ajax({
+            type: "post",
+            async: true,
+            url: urlConfig.getMenu,
+            dataType: "json", //返回数据形式为json
+            success: function (result) {
+                if (result.status) {
+                    $(".main-menu").html(result.jsonString);
+                }
+                else
+                {
+                    alert("会话超时,请重新登陆");
+                    window.location.href=urlConfig.home+"/login.html";
+                }
+            },
+            error: function () {
+                alert("会话超时,请重新登陆");
+                window.location.href=urlConfig.home+"/login.html";
+            }
+        });
+
+        $.ajax({
+            type: "post",
+            async: true,
+            url: urlConfig.getAdminProfile,
+            dataType: "json",
+            success: function (result) {
+                if (result.status) {
+                    $(".user-mini #name").html(result.jsonString.name);
+                    $("#profileTab #phone").html("登陆名:"+result.jsonString.phone);
+                    $("#profileTab #name").html("姓名:"+result.jsonString.name);
+                    $("#profileTab #email").html("电子邮箱:"+result.jsonString.email);
+                    $("#profileTab #group").html("所属用户组:"+result.jsonString.consoleGroupEntity.name);
+                }
+                else
+                {
+                }
+            },
+            error: function () {
+            }
+        });
+    });
+</script>
+</body>
+</html>

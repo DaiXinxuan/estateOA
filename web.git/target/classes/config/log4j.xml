@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Properties>
+        <Property name="backupFilePath">/opt/weblog/</Property>
+        <Property name="filename">app.log</Property>
+    </Properties>
+
+    <Appenders>
+        <Console name="Console"  target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5level %class{36} %L %M - %msg%xEx%n"/>
+        </Console>
+
+        <RollingFile name="FileError" fileName="${backupFilePath}${filename}"
+                     filePattern="${backupFilePath}$${date:yyyy-MM}/app-%d{yyyyMMddHHmmssSSS}.log.gz">
+            <PatternLayout
+                    pattern="%d{MM.dd HH:mm:ss} %-5level %class{36} %L %M - %msg%xEx%n" />
+            <SizeBasedTriggeringPolicy size="2MB" />
+            <DefaultRolloverStrategy max="200"/>
+        </RollingFile>
+
+        <!--<File name="File" fileName="${filename}/web.log">-->
+            <!--<PatternLayout>-->
+                <!--<pattern>%d %p %C{1.} [%t] %m%n</pattern>-->
+            <!--</PatternLayout>-->
+        <!--</File>-->
+    </Appenders>
+
+    <Loggers>
+        <Logger name="estate" level="trace" additivity="false">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="FileError"/>
+        </Logger>
+        <Root level="error">
+            <AppenderRef ref="FileError"/>
+            <AppenderRef ref="Console"/>
+        </Root>
+        <Root level="info">
+            <AppenderRef ref="FileError"/>
+            <AppenderRef ref="Console"/>
+        </Root>
+    </Loggers>
+</Configuration>

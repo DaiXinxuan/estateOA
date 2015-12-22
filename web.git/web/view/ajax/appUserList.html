@@ -1,0 +1,502 @@
+<link href="css/buttons.dataTables.min.css" rel="stylesheet">
+<link href="css/select.dataTables.min.css" rel="stylesheet">
+
+<div class="row">
+    <div id="breadcrumb" class="col-md-12">
+        <ol class="breadcrumb">
+            <li><a href="#">用户管理</a></li>
+            <li><a href="#">APP账号管理</a></li>
+        </ol>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box">
+            <div class="box-header">
+                <div class="box-name">
+                </div>
+                <div class="box-icons">
+                    <a class="expand-link">
+                        <i class="fa fa-expand"></i>
+                    </a>
+                </div>
+                <div class="no-move"></div>
+            </div>
+            <div class="box-content no-padding">
+                <table class="table table-bordered table-striped table-hover table-heading table-datatable"
+                       id="appUserListTable">
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>序号</th>
+                        <th>昵称</th>
+                        <th>手机</th>
+                        <th>注册时间</th>
+                        <th>状态</th>
+                        <th>物业信息</th>
+                        <th>门禁记录</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <th></th>
+                        <th>序号</th>
+                        <th>昵称</th>
+                        <th>手机</th>
+                        <th>注册时间</th>
+                        <th>状态</th>
+                        <th>物业信息</th>
+                        <th>门禁记录</th>
+                        <th>操作</th>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 门禁信息 -->
+<div class="modal fade" role="dialog" id="doorRecordModal">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="">门禁记录</h4>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12" >
+                            <ul class="list-group" id="doorRecordList">
+
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<!-- 物业信息 -->
+<div class="modal fade" role="dialog" id="propertyInfoModal">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">物业信息</h4>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12" id="propertyInfoList">
+                            <ol class="list-group">
+
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<script type="text/javascript">
+    var editTable;//全局的datatable变量
+    $('#appUserListTable tbody').on( 'click', 'button#doorRecordBtn', function () {
+        $("#doorRecordModal").modal("show");
+        var data = editTable.row($(this).parents('tr') ).data();
+        $.ajax({
+            type: "post",
+            async: false,
+            url: urlConfig.getDoorLog+data.phone,
+            dataType: "json",
+            success: function (result) {
+                if (result.status) {
+                    if(result.jsonString!=null)
+                    {
+                        var html="";
+                        for (var i in result.jsonString)
+                        {
+                            if(result.jsonString[i].status==0)
+                                result.jsonString[i].status="<font color='red'>失败</font>";
+                            else
+                                result.jsonString[i].status="<font color='green'>成功</font>";
+                            var date=formatDate(result.jsonString[i].openTime,"yyyy-MM-dd");
+                            html+='<li class="list-group-item">门禁代码:'+result.jsonString[i].symbol+
+                                    '&ensp;状态:'+result.jsonString[i].status+
+                                    '&ensp;描述:' +result.jsonString[i].description+
+                                    '&ensp;开门时间:' +date+
+                                    '</li>';
+                        }
+                        $("#doorRecordList").html(html);
+                    }
+                    else
+                    {
+                        $("#doorRecordList").html("暂无门禁记录");
+                    }
+                }
+                else
+                {
+                    $("#doorRecordList").html(result.errorMsg.description);
+                }
+            },
+            error: function () {
+                $("#doorRecordList").html("服务器连接失败");
+            }
+        });
+
+    });
+    $('#appUserListTable tbody').on( 'click', 'button#delRowBtn', function () {
+        var data = editTable.row($(this).parents('tr') ).data();
+        var comfirm=confirm("确定删除该用户?");
+        if(comfirm)
+        {
+            $.ajax({
+                type: "post",
+                async: false,
+                url: urlConfig.deleteAppUserByPhone+data.phone,
+                dataType: "json",
+                success: function (result) {
+                    if (result.status) {
+                        editTable.ajax.reload( null, false );
+                    }
+                    else
+                    {
+                        alert(result.errorMsg.description);
+                    }
+                },
+                error: function () {
+                    alert("服务器连接失败,请重试!");
+                }
+            });
+        }
+    });
+    $('#appUserListTable tbody').on( 'click', 'button#changeStatus', function () {
+        var status=$(this).attr("status");
+        var comfirm;
+        if(status=="enable")
+            comfirm=confirm("确定恢复该用户?");
+        else if(status=="disable")
+            comfirm=confirm("确定停用该用户?");
+        else
+            comfirm=confirm("确定同意该用户的绑定请求?");
+        if(comfirm)
+        {
+            var data = editTable.row($(this).parents('tr') ).data();
+            console.log(data);
+            $.ajax({
+                type: "post",
+                async: false,
+                url: urlConfig.changeAppUserStatus,
+                data: {
+                    phone:data.phone,
+                    status:status
+                },
+                dataType: "json", //返回数据形式为json
+                success: function (result) {
+                    if (result.status) {
+                        editTable.ajax.reload( null, false );
+                    }
+                    else
+                    {
+                        alert(result.errorMsg.description);
+                    }
+                },
+                error: function () {
+                    alert("服务器连接失败,请重试!");
+                }
+            });
+        }
+    });
+    $('#appUserListTable tbody').on( 'click', 'button#bindInfoBtn', function () {
+        var data = editTable.row($(this).parents('tr') ).data();
+        $.ajax({
+            type: "get",
+            async: false,
+            url: urlConfig.getPropertiesByAppUserPhone+data.phone,
+            dataType: "json", //返回数据形式为json
+            success: function (result) {
+                if (result.status) {
+                    $("#propertyInfoList").html("");
+                    if(result.jsonString!=null)
+                    {
+                        var html="";
+                        for (var i in result.jsonString)
+                        {
+                            if(result.jsonString[i].propertyEntity.type==2)
+                                result.jsonString[i].propertyEntity.type="住宅";
+                            else if(result.jsonString[i].propertyEntity.type==1)
+                                result.jsonString[i].propertyEntity.type="商户";
+                            if(result.jsonString[i].propertyEntity.status==-1)
+                                result.jsonString[i].propertyEntity.status="出租";
+                            if(result.jsonString[i].propertyEntity.status==1)
+                                result.jsonString[i].propertyEntity.status="自用";
+                            if(result.jsonString[i].status==0)
+                                result.jsonString[i].status="<font color='red'>待业主审核</font>";
+                            else
+                                result.jsonString[i].status="<font color='green'>正常</font>";
+
+                            if( result.jsonString[i].userRole==1)
+                                result.jsonString[i].userRole="家庭成员";
+                            else if(result.jsonString[i].userRole==2)
+                                result.jsonString[i].userRole="租客";
+                            else if(result.jsonString[i].userRole==3)
+                                result.jsonString[i].userRole="<font color='blue'>业主</font>";
+                            else
+                                result.jsonString[i].userRole="--";
+
+
+                            html+='<ul class="list-group">' +
+                                    '<li class="list-group-item">绑定角色: <span id="code">'+result.jsonString[i].userRole+'</span></li>'+
+                                    '<li class="list-group-item">状态: <span id="code">'+result.jsonString[i].status+'</span></li>'+
+                                    '<li class="list-group-item">房产编号: <span id="code">'+result.jsonString[i].propertyEntity.code+'</span></li>'+
+                                    '<li class="list-group-item">物业地址: <span id="location">'+result.jsonString[i].propertyEntity.location+'</span></li>'+
+                                    '<li class="list-group-item">面积: <span id="status">'+result.jsonString[i].propertyEntity.propertySquare+'</span></li>' +
+                                    '<li class="list-group-item">状态: <span id="status">'+result.jsonString[i].propertyEntity.status+'</span></li>' +
+                                    '<li class="list-group-item">物业类型: <span id="status">'+result.jsonString[i].propertyEntity.type+'</span></li>' +
+                                    '<li class="list-group-item">所属楼栋: <span id="status">'+result.jsonString[i].propertyEntity.buildingEntity.buildingCode+
+                                    '--'+result.jsonString[i].propertyEntity.buildingEntity.buildingName+'</span></li>' +
+                                    '</ul>';
+                        }
+                        $("#propertyInfoList").html(html);
+                    }
+                    else
+                    {
+                        $("#propertyInfoList").html("该用户未绑定任何物业");
+                    }
+                }
+                else
+                {
+                    $("#propertyInfoList").html(result.errorMsg.description);
+                }
+            },
+            error: function () {
+                alert("服务器连接失败,请重试!");
+            }
+        });
+        $("#propertyInfoModal").modal("show");
+    });
+    $('#appUserListTable tbody').on( 'click', 'button#selfInfoBtn', function () {
+        $("#selfInfoModal").modal("show");
+    });
+
+    //显示绑定用户的详细信息
+    function format ( d ) {
+        console.log(d);
+        var html="获取信息失败";
+        $.ajax({
+            type: "get",
+            async: false,
+            url: urlConfig.getUserInfoByPhone+d.phone,
+            dataType: "json", //返回数据形式为json
+            success: function (result) {
+                if (result.status) {
+                    if(result.jsonString!=null)
+                    {
+                        if(result.jsonString.identityType==0)
+                            result.jsonString.identityType="身份证";
+                        else if(result.jsonString.identityType==1)
+                            result.jsonString.identityType="军官证";
+                        else
+                            result.jsonString.identityType="未设置";
+                        if(result.jsonString.sex==0)
+                            result.jsonString.sex="男";
+                        else if(result.jsonString.sex==1)
+                            result.jsonString.sex="女";
+                        else
+                            result.jsonString.sex="未设置";
+                        if(result.jsonString.name==null)
+                            result.jsonString.name="未设置";
+                        if(result.jsonString.identityCode==null)
+                            result.jsonString.identityCode="未设置";
+                        if(result.jsonString.urgentName==null)
+                            result.jsonString.urgentName="未设置";
+                        if(result.jsonString.urgentPhone==null)
+                            result.jsonString.urgentPhone="未设置";
+
+                        console.log(result.jsonString);
+                        html='<ul class="list-group">' +
+                                '<li class="list-group-item">真实姓名: <span id="code">'+result.jsonString.name+'</span></li>'+
+                                '<li class="list-group-item">性别: <span id="">'+result.jsonString.sex+'</span></li>'+
+                                '<li class="list-group-item">证件类型: <span id="status">'+result.jsonString.identityType+'</span></li>' +
+                                '<li class="list-group-item">证件号码: <span id="propertySquare">'+result.jsonString.identityCode+'</span></li>'+
+                                '<li class="list-group-item">紧急联系人: <span id="propertySquare">'+result.jsonString.urgentName+'('+result.jsonString.urgentPhone+')</span></li>'+
+                                '</ul></br>';
+                    }
+                }
+                else
+                {
+                    $("#propertyInfoList").html(result.errorMsg.description);
+                }
+            },
+            error: function () {
+                alert("服务器连接失败,请重试!");
+            }
+        });
+        return html;
+    }
+    //初始化表格数据
+    function initDataTable(){
+        editTable=$('#appUserListTable').DataTable({
+            "processing":true,
+            "serverSide": true,
+            "ajax":{
+                "url": urlConfig.appUserList,
+                "dataSrc": "jsonString"
+            },
+            "columnDefs": [{
+                "targets": 0,
+                "visible": true,
+                "searchable": false,
+                "class":          "details-control",
+                "orderable":      false,
+                "data":           null,
+                "defaultContent": "<i class='fa fa-plus-circle'></i>"
+            },{
+                "targets": 1,
+                "data":null,
+                "orderable": false,
+                "searchable": false,
+                "createdCell": function (nTd, sData, oData, iRow, iCol) {
+                    var startnum=this.api().page()*(this.api().page.info().length);
+                    $(nTd).html(iRow+1+startnum);
+                }
+            },{
+                "targets": 2,
+                "data":"nickname",
+                "visible": true,
+                "orderable": false,
+                "searchable": false
+            },{
+                "targets": 3,
+                "data":"phone",
+                "visible": true,
+                "orderable": true,
+                "searchable": false
+            },{
+                "targets": 4,
+                "data":"registerTime",
+                "visible": true,
+                "orderable": false,
+                "searchable": false,
+                "render": function ( data, type, row ) {
+                    return formatDate(data,"yyyy-MM-dd");
+                }
+            },{
+                "targets": 5,
+                "data":"status",
+                "visible": true,
+                "orderable": false,
+                "searchable": false,
+                "render": function ( data, type, row ) {
+                    if (data==1)
+                        return "正常";
+                    else if(data==0)
+                        return "<font color='red'>禁用</font>";
+                    else
+                        return "<font color='red'>已删除</font>";
+                }
+            },{
+                "targets": 6,
+                "data": null,
+                "orderable": false,
+                "searchable": false,
+                "defaultContent":
+                        "<button id='bindInfoBtn' class='btn btn-primary' type='button'>绑定物业</button>"
+            },{
+                "targets": 7,
+                "data": null,
+                "orderable": false,
+                "searchable": false,
+                "defaultContent":
+                        "<button id='doorRecordBtn' class='btn btn-primary' type='button'>门禁记录</button>"
+            },{
+                "targets": 8,
+                "data": "status",
+                "orderable": false,
+                "searchable": false,
+                "render": function ( data, type, row ) {
+                    if(data==0)
+                        return "<button id='changeStatus' status='enable' class='btn btn-primary' type='button'>启用" +
+                                "</button>&ensp;<button id='delRowBtn' class='btn btn-primary' type='button'>删除</button>";
+                    else if(data==1)
+                        return "<button id='changeStatus' status='disable' class='btn btn-primary' type='button'>禁用" +
+                                "</button>&ensp;<button id='delRowBtn' class='btn btn-primary' type='button'>删除</button>";
+                    else
+                        return "<button id='changeStatus' status='enable' class='btn btn-primary' type='button'>恢复" +
+                                "</button>&ensp;<button id='delRowBtn' class='btn btn-primary' type='button'>删除</button>";
+                }
+            }],
+            "aaSorting": [[ 2, "asc" ]],
+            "autoWidth":false,
+            "sDom":
+                    "<'box-content'<'col-sm-6'f><'col-sm-6 text-right'l><'clearfix'>>tr<'box-content'<'col-sm-6'i><'col-sm-6 text-right'p><'clearfix'>>",
+            "language": {
+                "emptyTable":     "没有相关数据",
+                "info": "显示 _START_ 到 _END_ 条, 共 _TOTAL_ 条记录",
+                "infoEmpty":      "没有相关数据",
+                "infoFiltered":   "(筛选自 _MAX_ 条记录)",
+                "infoPostFix":    "",
+                "thousands":      ",",
+                "lengthMenu":     "每页显示 _MENU_ 条",
+                "loadingRecords": "加载中",
+                "processing":     "数据处理中",
+                "search":         "搜索:",
+                "zeroRecords":    "没有找到匹配数据",
+                "paginate": {
+                    "first":      "首页",
+                    "last":       "末页",
+                    "next":       "下一页",
+                    "previous":   "上一页"
+                },
+                "aria": {
+                    "sortAscending":  ":正序",
+                    "sortDescending": ":倒序"
+                }
+            }
+        });
+        var detailRows = [];
+        $('#appUserListTable tbody').on( 'click', 'tr td.details-control', function () {
+            var tr = $(this).closest('tr');
+            var row = editTable.row( tr );
+            var idx = $.inArray( tr.attr('id'), detailRows );
+            if ( row.child.isShown() ) {
+                tr.removeClass( 'details' );
+                row.child.hide();
+                $(this).html("<i class='fa fa-plus-circle'></i>");
+                // Remove from the 'open' array
+                detailRows.splice( idx, 1 );
+            }
+            else {
+                tr.addClass( 'details' );
+                row.child( format( row.data() ) ).show();
+                $(this).html("<i class='fa fa-minus-circle'></i>");
+                // Add to the 'open' array
+                if ( idx === -1 ) {
+                    detailRows.push( tr.attr('id') );
+                }
+            }
+        } );
+        // On each draw, loop over the `detailRows` array and show any child rows
+        editTable.on( 'draw', function () {
+            $.each( detailRows, function ( i, id ) {
+                $('#'+id+' td.details-control').trigger( 'click' );
+            } );
+        } );
+    }
+    $(document).ready(function() {
+        LoadDataTablesScripts(initDataTable);
+    });
+</script>

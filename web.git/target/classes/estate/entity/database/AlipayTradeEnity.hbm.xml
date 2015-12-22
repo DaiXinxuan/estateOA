@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="estate.entity.database.AlipayTradeEnity" table="alipaytradetable" schema="" catalog="PropertySystem">
+        <id name="tradeNo">
+            <column name="tradeNo" sql-type="varchar" not-null="true"/>
+        </id>
+        <property name="outTradeNo">
+            <column name="outTradeNo" sql-type="varchar" />
+        </property>
+        <property name="tradeStatus">
+            <column name="tradeStatus" sql-type="varchar" />
+        </property>
+        <property name="tradeDate">
+            <column name="tradeDate" sql-type="date" />
+        </property>
+        <property name="customerID">
+            <column name="customerAccount" sql-type="varchar"/>
+        </property>
+        <property name="sellerID">
+            <column name="sellerAccount" sql-type="varchar"/>
+        </property>
+        <property name="amount">
+            <column name="amount" sql-type="double"/>
+        </property>
+    </class>
+</hibernate-mapping>

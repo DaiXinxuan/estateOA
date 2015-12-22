@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<excels>
+    <property>
+        <code>房产编号</code>
+        <squre>房屋面积</squre>
+        <status>状态</status>
+        <address>地址</address>
+        <type>物业类型</type>
+        <buildingcode>所属楼栋</buildingcode>
+    </property>
+    <secret>
+        <code>门锁编码</code>
+        <password>无线密码</password>
+        <secret>开门密钥</secret>
+        <type>无线类型</type>
+        <controltype>控制对象</controltype>
+        <controlcode>对象编码</controlcode>
+    </secret>
+    <bind>
+        <name>姓名</name>
+        <sex>性别</sex>
+        <phone>手机号码</phone>
+        <idtype>证件类型</idtype>
+        <idcode>证件号码</idcode>
+        <birthday>出生日期</birthday>
+        <propertycodelist>物业列表</propertycodelist>
+        <authtime>入住时间</authtime>
+        <urgentname>紧急联系人姓名</urgentname>
+        <urgentphone>紧急联系人电话</urgentphone>
+    </bind>
+
+</excels>

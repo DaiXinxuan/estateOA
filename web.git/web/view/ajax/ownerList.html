@@ -1,0 +1,386 @@
+<link href="css/buttons.dataTables.min.css" rel="stylesheet">
+<link href="css/select.dataTables.min.css" rel="stylesheet">
+
+<div class="row">
+    <div id="breadcrumb" class="col-md-12">
+        <ol class="breadcrumb">
+            <li><a href="#">用户管理</a></li>
+            <li><a href="#">住户清单</a></li>
+        </ol>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box">
+            <div class="box-header">
+                <div class="box-name">
+                    <!--<button id="addOwnerBtn" class="btn btn-info">添加业主</button>-->
+                </div>
+                <div class="box-icons">
+                    <a class="expand-link">
+                        <i class="fa fa-expand"></i>
+                    </a>
+                </div>
+                <div class="no-move"></div>
+            </div>
+            <div class="box-content no-padding">
+                <table class="table table-bordered table-striped table-hover table-heading table-datatable"
+                       id="ownerListTable">
+                    <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>姓名</th>
+                        <th>性别</th>
+                        <th>电话</th>
+                        <th>证件类型</th>
+                        <th>证件号码</th>
+                        <th>认证时间</th>
+                        <th>名下物业</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <th>序号</th>
+                        <th>姓名</th>
+                        <th>性别</th>
+                        <th>电话</th>
+                        <th>证件类型</th>
+                        <th>证件号码</th>
+                        <th>认证时间</th>
+                        <th>名下物业</th>
+                        <th>操作</th>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" role="dialog" id="formModel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">名下物业信息</h4>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12" id="ownerInfo">
+                            <ul class="list-group" id="propertyInfo">
+
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade" role="dialog" id="addOwnerModal">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="gridSystemModalLabel">增加业主</h4>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <form id="ownerAddForm" method="post" action="" class="form-horizontal">
+                            <fieldset>
+                                <legend>基本信息</legend>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">姓名</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" name="name" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">性别</label>
+                                    <div class="col-sm-6">
+                                        <select class="form-control" name="sex">
+                                            <option value="1">男</option>
+                                            <option value="2">女</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">车牌号</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" placeholder="xxxxx;xxxxx"
+                                               name="vehicleIdList" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">电话号码</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" name="phone" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">证件类型</label>
+                                    <div class="col-sm-6">
+                                        <select name="identityType" class="form-control" id="identityType">
+                                            <option value="1">身份证</option>
+                                            <option value="2">军人证</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">证件号码</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" name="identityCode" />
+                                    </div>
+                                </div>
+                                <div class="form-group has-feedback">
+                                    <label class="col-sm-3 control-label">入住时间</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" id="authTime" name="authTime"
+                                               class="form-control input_date" placeholder="">
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <div class="form-group">
+                                <div class="col-sm-9 col-sm-offset-3">
+                                    <button type="submit" class="btn btn-primary">提交</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<script type="text/javascript">
+    var editTable;//全局的datatable变量
+
+    $('#ownerListTable tbody').on( 'click', 'button#delRow', function () {
+        var comfirm=confirm("确定删除?");
+        if(comfirm)
+        {
+            var data = editTable.row($(this).parents('tr') ).data();
+            $.ajax({
+                type: "get",
+                async: true,
+                url: urlConfig.deleteOwnerByPhone+data.phone,
+                dataType: "json", //返回数据形式为json
+                success: function (result) {
+                    if (result.status) {
+                        alert("删除成功");
+                        editTable.ajax.reload( null, false );
+                    }
+                    else
+                    {
+                        alert(result.errorMsg.description);
+                    }
+                },
+                error: function () {
+                    alert("服务器连接失败,请重试!");
+                }
+            });
+        }
+    });
+
+
+    //显示业主的个人信息和房产信息
+    $('#ownerListTable').on( 'click', 'button#detailRow', function () {
+        $("#formModel").modal("show");
+        var data = editTable.row($(this).parents('tr') ).data();
+        $.ajax({
+            type: "get",
+            async: true,
+            url: urlConfig.getPropertiesByOwnerPhone+data.phone,
+            dataType: "json", //返回数据形式为json
+            success: function (result) {
+                if (result.status) {
+                    $("#propertyInfo").html("");
+                    if(result.jsonString!=null)
+                    {
+                        var html="";
+                        for (var i in result.jsonString)
+                        {
+                            if(result.jsonString[i].type==2)
+                                result.jsonString[i].type="住宅";
+                            else if(result.jsonString[i].type==1)
+                                result.jsonString[i].type="商户";
+                            if(result.jsonString[i].status==-1)
+                                result.jsonString[i].status="出租";
+                            if(result.jsonString[i].status==1)
+                                result.jsonString[i].status="自用";
+                            html+='<ul class="list-group">' +
+                                    '<li class="list-group-item">房产编号: <span id="code">'+result.jsonString[i].code+'</span></li>'+
+                                    '<li class="list-group-item">物业地址: <span id="location">'+result.jsonString[i].location+'</span></li>'+
+                                    '<li class="list-group-item">面积: <span id="status">'+result.jsonString[i].propertySquare+'</span></li>' +
+                                    '<li class="list-group-item">状态: <span id="status">'+result.jsonString[i].status+'</span></li>' +
+                                    '<li class="list-group-item">物业类型: <span id="status">'+result.jsonString[i].type+'</span></li>' +
+                                    '<li class="list-group-item">更新时间: <span id="status">'+formatDate(result.jsonString[i].modifyTime,"yyyy-MM-dd")+'</span></li>' +
+                                    '<li class="list-group-item">所属楼栋: <span id="status">'+result.jsonString[i].buildingEntity.buildingCode+
+                                    '--'+result.jsonString[i].buildingEntity.buildingName+'</span></li>' +
+                                '</ul>';
+                        }
+                        $("#propertyInfo").html(html);
+                    }
+                    else
+                    {
+                        $("#propertyInfo").html("该业主未绑定任何物业,请在物业管理界面绑定物业");
+                    }
+                }
+                else
+                {
+                    $("#propertyInfo").html(result.errorMsg.description);
+                }
+            },
+            error: function () {
+                $("#propertyInfo").html("服务器连接失败");
+            }
+        });
+    });
+
+    //初始化表格数据
+    function initDataTable(){
+        editTable=$('#ownerListTable').DataTable({
+            "processing":true,
+            "serverSide": true,
+            "ajax":{
+                "url": urlConfig.ownerList,
+                "dataSrc": "jsonString"
+            },
+            "columnDefs": [{
+                "targets": 0,
+                "data":null,
+                "orderable": false,
+                "searchable": false,
+                "createdCell": function (nTd, sData, oData, iRow, iCol) {
+                    var startnum=this.api().page()*(this.api().page.info().length);
+                    $(nTd).html(iRow+1+startnum);
+                }
+            },{
+                "targets": 1,
+                "data": "name",
+                "visible": true,
+                "orderable": false,
+                "searchable": true
+
+            },{
+                "targets": 2,
+                "data": "sex",
+                "visible": true,
+                "orderable": false,
+                "searchable": true,
+                "render": function ( data, type, row ) {
+                    if(data==0)
+                        return "男";
+                    else if(data==1)
+                        return "女";
+                    else
+                        return "未设置";
+                }
+
+            },{
+                "targets": 3,
+                "data": "phone",
+                "visible": true,
+                "orderable": false,
+                "searchable": true
+
+            },{
+                "targets": 4,
+                "data": "identityType",
+                "visible": true,
+                "orderable": false,
+                "searchable": true,
+                "render": function ( data, type, row ) {
+                    if(data==0)
+                        return "身份证";
+                    else if(data==1)
+                        return "军官证";
+                    else if(data==2)
+                        return "护照";
+                    else
+                        return "未设置";
+                }
+
+            },{
+                "targets": 5,
+                "data": "identityCode",
+                "visible": true,
+                "orderable": false,
+                "searchable": true
+
+            },{
+                "targets": 6,
+                "data": "authenticationTime",
+                "visible": true,
+                "orderable": false,
+                "searchable": true,
+                "render": function ( data, type, row ) {
+                    return formatDate(data,"yyyy-MM-dd");
+                }
+
+            },{
+                "targets": 7,
+                "data": null,
+                "orderable": false,
+                "searchable": false,
+                "defaultContent":
+                        "<button id='detailRow' class='btn btn-primary' type='button'>查看</button>"
+            },{
+                "targets": 8,//删除
+                "data": null,
+                "orderable": false,
+                "searchable": false,
+                "defaultContent":
+//                        "<button id='editRow' class='btn btn-primary' type='button'>编辑</button>&ensp;" +
+                        "<button id='delRow' class='btn btn-primary' type='button'>删除</button>"
+            }
+            ],
+            "aaSorting": [[ 2, "asc" ]],
+            "autoWidth":false,
+            "sDom":
+                    "<'box-content'<'col-sm-6'f><'col-sm-6 text-right'l><'clearfix'>>tr<'box-content'<'col-sm-6'i><'col-sm-6 text-right'p><'clearfix'>>",
+            "language": {
+                "emptyTable":     "没有相关数据",
+                "info": "显示 _START_ 到 _END_ 条, 共 _TOTAL_ 条记录",
+                "infoEmpty":      "没有相关数据",
+                "infoFiltered":   "(筛选自 _MAX_ 条记录)",
+                "infoPostFix":    "",
+                "thousands":      ",",
+                "lengthMenu":     "每页显示 _MENU_ 条",
+                "loadingRecords": "加载中",
+                "processing":     "数据处理中",
+                "search":         "搜索:",
+                "zeroRecords":    "没有找到匹配数据",
+                "paginate": {
+                    "first":      "首页",
+                    "last":       "末页",
+                    "next":       "下一页",
+                    "previous":   "上一页"
+                },
+                "aria": {
+                    "sortAscending":  ":正序",
+                    "sortDescending": ":倒序"
+                }
+            }
+        });
+
+
+    }
+
+    $(document).ready(function() {
+        LoadDataTablesScripts(initDataTable);
+    });
+</script>

@@ -1,0 +1,439 @@
+<div class="row">
+	<div id="breadcrumb" class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#">物业费管理</a></li>
+			<li><a href="#">缴费清单</a></li>
+		</ol>
+	</div>
+</div>
+<div class="row">
+	<div class="col-xs-12">
+		<div class="box">
+			<div class="box-header">
+				<div class="box-name">
+					<button id="generateBillBtn" class="btn btn-info">一键生成账单</button>
+				</div>
+				<div class="box-icons">
+					<a class="expand-link">
+						<i class="fa fa-expand"></i>
+					</a>
+				</div>
+				<div class="no-move"></div>
+			</div>
+			<div class="box-content no-padding">
+                    <div class="box-content" style="padding-bottom:0px;padding-left: 30px">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label for="billStatus">状态</label>
+                                <select name="billStatus" id="billStatus">
+                                    <option value="">所有状态</option>
+                                    <option value="0">未缴费</option>
+                                    <option value="1">已缴费</option>
+                                </select>
+                            </div>
+                            <div class="col-md-8">
+                                <label for="billStartTime">开始日期</label>
+                                <input type="text" id="billStartTime" class="input_date"/>
+                                <label for="billEndTime">截止日期</label>
+                                <input type="text" id="billEndTime" class="input_date"/>
+                                <button id="doFilterBtn">确定</button>
+                            </div>
+                        </div>
+                    </div>
+
+				<table class="table table-bordered table-striped table-hover table-heading table-datatable"
+					   id="billListTable">
+					<thead>
+						<tr>
+							<th>序号</th>
+							<th>账单号</th>
+							<th>用户电话</th>
+							<th>车位费总价</th>
+							<th>服务费总价</th>
+							<th>物业费总价</th>
+                            <th>滞纳金</th>
+                            <th>合计</th>
+							<th>是否缴费</th>
+							<th>付款方式</th>
+                            <th>付款时间</th>
+                            <th>生成时间</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody>
+					<!-- Start: list_row -->
+					<!-- End: list_row -->
+					</tbody>
+					<tfoot>
+						<tr>
+                            <th>序号</th>
+                            <th>账单号</th>
+                            <th>用户电话</th>
+                            <th>车位费总价</th>
+                            <th>服务费总价</th>
+                            <th>物业费总价</th>
+                            <th>滞纳金</th>
+                            <th>合计</th>
+                            <th>是否缴费</th>
+                            <th>付款方式</th>
+                            <th>付款时间</th>
+                            <th>生成时间</th>
+                            <th>操作</th>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" role="dialog" id="billInfoModal">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">账单详细信息</h4>
+			</div>
+			<div class="modal-body">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-md-12">
+                            <h3>物业费(含所有待缴物业费)</h3>
+                            <ul class="list-group" id="propertyFeeInfo">
+
+                            </ul>
+                            <hr/>
+                            <h3>车位费</h3>
+                            <ul class="list-group" id="parklotFeeInfo">
+
+                            </ul>
+                            <hr/>
+                            <h3>服务费</h3>
+                            <ul class="list-group" id="serviceFeeInfo">
+
+                            </ul>
+                            <hr/>
+                            <h3>滞纳金</h3>
+                            <ul class="list-group" id="overdueFeeInfo">
+
+                            </ul>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!
+</div>
+<script type="text/javascript">
+	var editTable;
+
+	$("#doFilterBtn").click(function(){
+        var startTime=$("#billStartTime").val();
+        var endTime=$("#billEndTime").val();
+        if(startTime!=""&&endTime=="")
+            alert("请选择截止日期");
+        else if(startTime==""&&endTime!="")
+            alert("请选择开始日期");
+        else if(startTime!=""&&endTime!=""&&startTime>=endTime)
+            alert("截止日期必须大于开始日期");
+        else
+		    editTable.draw();
+	});
+
+	$("#generateBillBtn").click(function(){
+        var obj=$(this);
+        obj.attr("disabled","disabled");
+		var con=confirm("确定您的操作?\n手动生成的账单为临时账单,不影响最后结算");
+		var thisObject=$(this);
+		if(con)
+		{
+			thisObject.html('正在生成中<i class="fa fa-spinner fa-spin">');
+			$.ajax({
+				type: "post",
+				async: true,
+				url: urlConfig.generatePropertyBill,
+				dataType: "json",
+				success: function (result) {
+					if (result.status) {
+						editTable.ajax.reload( null, false );
+						alert("生成成功");
+						thisObject.html('一键生成账单');
+                        obj.removeAttr("disabled");
+					}
+					else
+					{
+						alert(result.errorMsg.description);
+						thisObject.html('一键生成账单');
+					}
+				},
+				error: function () {
+					alert("服务器连接失败,请重试!");
+					thisObject.html('一键生成账单');
+				}
+			});
+		}
+	});
+
+    $('#billListTable tbody').on( 'click', 'button#detailRowBtn', function (){
+        $("#billInfoModal").modal("show");
+        var data = editTable.row($(this).parents('tr') ).data();
+        $("#propertyFeeInfo").html(parseBill(data.propertyBill));
+        $("#parklotFeeInfo").html(parseBill(data.parklotBill));
+        $("#serviceFeeInfo").html(parseBill(data.serviceBill));
+        $("#overdueFeeInfo").html(parseBill(data.overdueFee));
+    });
+
+    function parseBill(data)
+    {
+        if(data==null||data=="")
+            return "暂无账单详情";
+        else
+        {
+            var kvs=data.split(";");
+            var html="";
+            for (var i in kvs)
+            {
+                html=html+"<li class='list-group-item'>"+kvs[i]+"</li>";
+            }
+            return html;
+        }
+    }
+
+    $('#billListTable tbody').on( 'click', 'button#pushPayBtn', function (){
+        var data = editTable.row($(this).parents('tr') ).data();
+        console.log(data);
+        var con=confirm("确定发送？");
+        if(con)
+        {
+            alert("催缴成功");
+//            $.ajax({
+//                type: "get",
+//                async: false,
+//                url: urlConfig.pushBill+data.propertyId,
+//                dataType: "json",
+//                success: function (result) {
+//                    if (result.status) {
+//                        alert("短信发送成功");
+//                    }
+//                    else
+//                    {
+//                        alert("短信发送失败!");
+//                    }
+//                },
+//                error: function () {
+//                    alert("服务器连接失败,请重试!");
+//                }
+//            });
+        }
+    });
+
+	//初始化表格数据
+	function initDataTable(){
+		editTable=$('#billListTable').DataTable({
+			"processing":true,
+			"serverSide": true,
+			"ajax":{
+				"url": urlConfig.getBillList,
+                "data":function ( d ) {
+                    d.status = $("#billStatus option:selected").val();
+                    d.billStartTime=$("#billStartTime").val();
+                    d.billEndTime=$("#billEndTime").val();
+                },
+				"dataSrc": "jsonString"
+			},
+			"columnDefs": [{
+				"targets": 0,
+				"data":null,
+				"orderable": false,
+				"searchable": false,
+				"createdCell": function (nTd, sData, oData, iRow, iCol) {
+					var startnum=this.api().page()*(this.api().page.info().length);
+					$(nTd).html(iRow+1+startnum);
+				}
+			},{
+				"targets": 1,
+				"data":"billSeris",
+				"orderable": false,
+				"searchable": false
+			},{
+				"targets": 2,
+				"data":"phone",
+				"orderable": false,
+				"searchable": false
+			},{
+				"targets": 3,
+				"data":"parklotBill",
+				"visible": true,
+				"orderable": false,
+				"searchable": false,
+                "render": function ( data, type, row ) {
+                    if(data==null||data=="")
+                        return "0.00";
+                    var kvs=data.split(";");
+                    var total=0;
+                    for (var i in kvs)
+                    {
+                        total+=parseFloat(kvs[i].split(":")[1]);
+                    }
+                    return total.toFixed(2);
+                }
+			},{
+                "targets": 4,
+                "data": "serviceBill",
+                "orderable": false,
+                "searchable": false,
+                "render": function ( data, type, row ) {
+                    if(data==null||data=="")
+                        return "0.00";
+                    var kvs=data.split(";");
+                    var total=0;
+                    for (var i in kvs)
+                    {
+                        total+=parseFloat(kvs[i].split(":")[1]);
+                    }
+                    return total.toFixed(2);
+                }
+            },{
+                "targets": 5,
+                "data": "propertyBill",
+                "orderable": false,
+                "searchable": false,
+                "render": function ( data, type, row ) {
+                    if(data==null||data=="")
+                        return "待结算";
+                    var kvs=data.split(";");
+                    var total=0;
+                    for (var i in kvs)
+                    {
+                        total+=parseFloat(kvs[i].split(":")[1]);
+                    }
+                    return total.toFixed(2);
+                }
+            },{
+                "targets": 6,
+                "data": "overdueFee",
+                "orderable": false,
+                "searchable": false,
+                "defaultContent":
+                        "0.00"
+            },{
+                "targets": 7,
+                "data": "propertyBill",
+                "orderable": false,
+                "searchable": false,
+                "render": function ( data, type, row ) {
+                    if(row.propertyBill!=null&&row.propertyBill!="")
+                        data=row.propertyBill;
+                    if(row.overdueFee!=null&&row.overdueFee!="")
+                        data=data==""||data==null?data+row.overdueFee:data+";"+row.overdueFee;
+                    if(row.serviceBill!=null&&row.serviceBill!="")
+                        data=data==""||data==null?data+row.serviceBill:data+";"+row.serviceBill;
+                    if(row.parklotBill!=null&&row.parklotBill!="")
+                        data=data==""||data==null?data+row.parklotBill:data+";"+row.parklotBill;
+                    if(data==null||data=="")
+                        return "0.00";
+                    var kvs=data.split(";");
+                    var total=0;
+                    for (var i in kvs)
+                    {
+                        total+=parseFloat(kvs[i].split(":")[1]);
+                    }
+                    return total.toFixed(2);
+                }
+            },{
+				"targets": 8,
+				"data": "payStatus",
+				"orderable": false,
+				"searchable": false,
+				"render": function ( data, type, row ) {
+					if (data==0)
+						return "<font color='red'>未缴费</font>";
+					else if (data==1)
+						return "<font color='green'>已缴费</font>";
+					else
+						return "--";
+				}
+			},{
+                "targets": 9,
+                "data": "payType",
+                "orderable": false,
+                "searchable": false,
+                "render": function ( data, type, row ) {
+                    if (data==null)
+                        return "--";
+                    else if (data==1)
+                        return "<font color='green'>支付宝</font>";
+                    else
+                        return "--";
+                }
+            },{
+                "targets": 10,
+                "data": "payTime",
+                "orderable": false,
+                "searchable": false,
+                "render": function ( data, type, row ) {
+                    return formatDate(data,"yyyy-MM-dd");
+                }
+            },{
+                "targets": 11,
+                "data": "updateTime",
+                "orderable": false,
+                "searchable": false,
+                "render": function ( data, type, row ) {
+                    return formatDate(data,"yyyy-MM-dd");
+                }
+            },{
+                "targets": 12,
+                "data": null,
+                "orderable": false,
+                "searchable": false,
+                "defaultContent":
+                        "<button id='detailRowBtn' class='btn btn-primary' type='button'>详情</button>&ensp;"+
+                        "<button id='pushPayBtn' class='btn btn-primary' type='button'>催缴</button>"
+            }],
+			"autoWidth":false,
+			"sDom":
+					"<'box-content'<'col-sm-6'f><'col-sm-6 text-right'l><'clearfix'>>tr<'box-content'<'col-sm-6'i><'col-sm-6 text-right'p><'clearfix'>>",
+			"language": {
+				"emptyTable":     "没有相关数据",
+				"info": "显示 _START_ 到 _END_ 条, 共 _TOTAL_ 条记录",
+				"infoEmpty":      "没有相关数据",
+				"infoFiltered":   "(筛选自 _MAX_ 条记录)",
+				"infoPostFix":    "",
+				"thousands":      ",",
+				"lengthMenu":     "每页显示 _MENU_ 条",
+				"loadingRecords": "加载中",
+				"processing":     "数据处理中",
+				"search":         "搜索:",
+				"zeroRecords":    "没有找到匹配数据",
+				"paginate": {
+					"first":      "首页",
+					"last":       "末页",
+					"next":       "下一页",
+					"previous":   "上一页"
+				},
+				"aria": {
+					"sortAscending":  ":正序",
+					"sortDescending": ":倒序"
+				}
+			}
+		});
+	}
+$(document).ready(function() {
+    $('.input_date').datepicker({
+        setDate: new Date(), dateFormat: "yy-mm-dd",
+        showButtonPanel: true,
+        closeText: "关闭",
+        yearSuffix: '年',
+        currentText: '今天',
+        showMonthAfterYear: true,
+        monthNames: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+        dayNames: ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
+        dayNamesShort: ['周日', '周一', '周二', '周三', '周四', '周五', '周六'],
+        dayNamesMin: ['日', '一', '二', '三', '四', '五', '六']
+    });
+	LoadDataTablesScripts(initDataTable);
+});
+</script>

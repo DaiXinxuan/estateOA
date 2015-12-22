@@ -1,0 +1,274 @@
+
+<div class="row">
+    <div id="breadcrumb" class="col-md-12">
+        <ol class="breadcrumb">
+            <li><a href="#">YunPass管理</a></li>
+            <li><a href="#">APK管理</a></li>
+        </ol>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box">
+            <div class="box-header">
+                <div class="box-name">
+                    <button id="addApkBtn" class="btn btn-info">上传新版本</button>
+                </div>
+                <div class="box-icons">
+                    <a class="expand-link">
+                        <i class="fa fa-expand"></i>
+                    </a>
+                </div>
+                <div class="no-move"></div>
+            </div>
+            <div class="box-content no-padding">
+                <table class="table table-bordered table-striped table-hover table-heading table-datatable"
+                       id="apkListTable">
+                    <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>版本号</th>
+                        <th>文件名称</th>
+                        <th>更新说明</th>
+                        <th>上传时间</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <th>序号</th>
+                        <th>版本号</th>
+                        <th>文件名称</th>
+                        <th>更新说明</th>
+                        <th>上传时间</th>
+                        <th>操作</th>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" role="dialog" id="addApkModel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="gridSystemModalLabel">上传apk</h4>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <form id="addApkForm" method="post" class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">版本号</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="versionCode"/>
+                                    </div>
+                                </div>
+                                <div class="form-group has-feedback">
+                                    <label class="col-sm-2 control-label">输入描述(可选)</label>
+                                    <div class="col-sm-8">
+                                        <textarea name="description" class="form-control" id="description" rows="3"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">选择文件(apk)</label>
+                                    <div class="col-sm-8">
+                                        <input type="file" name="apk"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-9 col-sm-offset-2">
+                                        <button type="submit" class="btn btn-primary">提交</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<script type="text/javascript">
+    var editTable;//全局的datatable变量
+
+    $('#apkListTable tbody').on( 'click', 'button#delRowBtn', function () {
+        var data = editTable.row($(this).parents('tr') ).data();
+        var con=confirm("确定该删除该版本?");
+        if(con) {
+            $.ajax({
+                type: "get",
+                async: true,
+                url: urlConfig.deleteApk + data.id,
+                dataType: "json", //返回数据形式为json
+                success: function (result) {
+                    if (result.status) {
+                        editTable.ajax.reload(null, false);
+                        alert("删除成功");
+                    }
+                    else {
+                        alert(result.errorMsg.description);
+                    }
+                },
+                error: function () {
+                    alert("服务器连接失败,请重试!");
+                }
+            });
+        }
+    });
+
+
+    //增加园区
+    $("#addApkBtn").click(function(){
+        $("#addApkModel").modal("show");
+    });
+    function apkAddValidator() {
+        $('#addApkForm').bootstrapValidator({
+            message: '存在非法输入',
+            fields: {
+                versionCode: {
+                    validators: {
+                        notEmpty: {
+                            message: '请输入版本号'
+                        }
+                    }
+                },
+                apk:{
+                    validators: {
+                        notEmpty: {
+                            message: '请选择文件'
+                        }
+                    }
+                }
+            }
+        }).on("success.form.bv",function(e){
+            e.preventDefault();
+            submitForm();
+        });
+    }
+    function submitForm()
+    {
+        var formData = new FormData($("#addApkForm")[0]);
+        $.ajax({
+            url: urlConfig.apkUpload ,
+            type: 'POST',
+            data: formData,
+            async: true,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (result) {
+                if (result.status) {
+                    editTable.ajax.reload(null, false);
+                    alert("添加成功");
+                    $("#addApkModel").modal("hide");
+                }
+                else {
+                    alert(result.errorMsg.description);
+                }
+            },
+            error: function () {
+                alert("服务器连接失败,请重试!");
+            }
+        });
+    }
+
+
+    //初始化表格数据
+    function initDataTable(){
+        editTable=$('#apkListTable').DataTable({
+            "processing":true,
+            "serverSide": true,
+            "ajax":{
+                "url": urlConfig.apkList,
+                "dataSrc": "jsonString"
+            },
+            "columnDefs": [{
+                "targets": 0,
+                "data":null,
+                "orderable": false,
+                "searchable": false,
+                "createdCell": function (nTd, sData, oData, iRow, iCol) {
+                    var startnum=this.api().page()*(this.api().page.info().length);
+                    $(nTd).html(iRow+1+startnum);
+                }
+            },{
+                "targets": 1,
+                "data": "versionCode",
+                "orderable": false,
+                "searchable": false
+
+            },{
+                "targets": 2,
+                "data": "apkName",
+                "orderable": false,
+                "searchable": false
+
+            },{
+                "targets": 3,
+                "data": "description",
+                "orderable": false,
+                "searchable": false
+
+            },{
+                "targets": 4,
+                "data": "uploadTime",
+                "orderable": false,
+                "searchable": false,
+                "render": function ( data, type, row ) {
+                    return formatDate(data,"yyyy-MM-dd");
+                }
+            },{
+                "targets": 5,//删除
+                "data": null,
+                "orderable": false,
+                "searchable": false,
+                "defaultContent":
+                        "<button id='delRowBtn' class='btn btn-primary' type='button'>删除</button>"
+            }
+            ],
+            "aaSorting": [[ 0, "desc" ]],
+            "autoWidth":false,
+            "sDom":
+                    "<'box-content'<'col-sm-6'f><'col-sm-6 text-right'l><'clearfix'>>rt<'box-content'<'col-sm-6'i><'col-sm-6 text-right'p><'clearfix'>>",
+            "language": {
+                "emptyTable":     "没有相关数据",
+                "info": "显示 _START_ 到 _END_ 条, 共 _TOTAL_ 条记录",
+                "infoEmpty":      "没有相关数据",
+                "infoFiltered":   "(筛选自 _MAX_ 条记录)",
+                "infoPostFix":    "",
+                "thousands":      ",",
+                "lengthMenu":     "每页显示 _MENU_ 条",
+                "loadingRecords": "加载中",
+                "processing":     "数据处理中",
+                "search":         "搜索:",
+                "zeroRecords":    "没有找到匹配数据",
+                "paginate": {
+                    "first":      "首页",
+                    "last":       "末页",
+                    "next":       "下一页",
+                    "previous":   "上一页"
+                },
+                "aria": {
+                    "sortAscending":  ":正序",
+                    "sortDescending": ":倒序"
+                }
+            }
+        });
+
+    }
+    $(document).ready(function() {
+        LoadDataTablesScripts(initDataTable);
+        LoadBootstrapValidatorScript(apkAddValidator);
+//        LoadSelect2Script(yunPassListSelect2);
+    });
+</script>

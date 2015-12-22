@@ -1,0 +1,136 @@
+<div class="row">
+	<div id="breadcrumb" class="col-xs-12">
+		<ol class="breadcrumb">
+			<li><a href="index.html">系统首页</a></li>
+		</ol>
+	</div>
+</div>
+<div id="dashboard-header" class="row">
+	<div class="col-xs-10 col-sm-2">
+		<h3>控制台</h3>
+	</div>
+	<div class="clearfix visible-xs"></div>
+	<div class="col-xs-12 col-sm-8 col-md-7 pull-right">
+		<div class="row">
+			<div class="col-xs-4">
+			</div>
+			<div class="col-xs-4">
+			</div>
+			<div class="col-xs-4">
+				<div class="sparkline-dashboard" id="sparkline-3"></div>
+				<div class="sparkline-dashboard-info">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row-fluid">
+	<!--<div id="dashboard_links" class="col-xs-12 col-sm-2 pull-right">-->
+		<!--<ul class="nav nav-pills nav-stacked">-->
+			<!--<li class="active"><a href="#" class="tab-link" id="overview">物业情况</a></li>-->
+			<!--<li><a href="#" class="tab-link" id="clients">投诉统计</a></li>-->
+			<!--<li><a href="#" class="tab-link" id="graph">缴费统计</a></li>-->
+			<!--<li><a href="#" class="tab-link" id="servers">报修统计</a></li>-->
+		<!--</ul>-->
+	<!--</div>-->
+	<div id="dashboard_tabs" class="col-xs-12 col-sm-12">
+		<div id="dashboard-overview" class="row" style="width:100%; position: absolute;" >
+			<div class="col-xs-4">
+				<legend>系统状态</legend>
+				<ul class="list-group" id="systemInfo">
+					<li class="list-group-item">APP注册用户数量: <span id="appNum"></span></li>
+					<li class="list-group-item">投诉报修数量: <span id="complainRepair"></span></li>
+					<li class="list-group-item">业主数量: <span id="ownerNum"></span></li>
+					<li class="list-group-item">园区数量: <span id="villageNum"></span></li>
+					<li class="list-group-item">维修人员数量: <span id="repairManNum"></span></li>
+					<li class="list-group-item">系统平台:Ubuntu14.04</li>
+					<li class="list-group-item">服务器负载:<font color="green">正常</font></li>
+				</ul>
+			</div>
+			<div class="col-xs-4">
+				<legend>物业统计</legend>
+				<div style="width: 300px;margin: 0 auto;">
+					<canvas id="propertyPie" height="300" ></canvas>
+				</div>
+			</div>
+			<div class="col-xs-4">
+				<legend>车位统计</legend>
+				<div style="width: 300px;margin: 0 auto;">
+					<canvas id="parkLotPie" height="300" ></canvas>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="clearfix"></div>
+</div>
+<!--End Dashboard 2 -->
+<div style="height: 40px;"></div>
+<script src="plugins/chart/Chart.min.js"></script>
+<script>
+
+	$(document).ready(function() {
+		$.ajax({
+			type: "get",
+			async: true,
+			url: urlConfig.systemInfoStatis,
+			dataType: "json", //返回数据形式为json
+			success: function (result) {
+				if (result.status) {
+					if(result.jsonString!=null)
+					{
+						var info=result.jsonString;
+						$("#systemInfo #appNum").html(info.appNum);
+						$("#systemInfo #complainRepair").html(info.complainNum+"/"+info.repairNum);
+						$("#systemInfo #ownerNum").html(info.ownerNum);
+						$("#systemInfo #villageNum").html(info.villageNum);
+						$("#systemInfo #repairManNum").html(info.repairManNum);
+					}
+				}
+				else
+				{
+				}
+			},
+			error: function () {
+			}
+		});
+		$.ajax({
+			type: "get",
+			async: true,
+			url: urlConfig.propertyStatis,
+			dataType: "json", //返回数据形式为json
+			success: function (result) {
+				if (result.status) {
+					var pieData=result.jsonString;
+					var ctx = document.getElementById("propertyPie").getContext("2d");
+					window.myPie = new Chart(ctx).Pie(pieData,{});
+				}
+				else
+				{
+				}
+			},
+			error: function () {
+			}
+		});
+		$.ajax({
+			type: "get",
+			async: true,
+			url: urlConfig.parkLotStatis,
+			dataType: "json", //返回数据形式为json
+			success: function (result) {
+				if (result.status) {
+					var pieData=result.jsonString;
+					var ctx = document.getElementById("parkLotPie").getContext("2d");
+					window.myPie = new Chart(ctx).Pie(pieData,{});
+				}
+				else
+				{
+				}
+			},
+			error: function () {
+			}
+		});
+	});
+
+
+
+</script>

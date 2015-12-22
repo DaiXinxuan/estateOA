@@ -1,0 +1,330 @@
+
+<div class="row">
+    <div id="breadcrumb" class="col-md-12">
+        <ol class="breadcrumb">
+            <li><a href="#">物业管理</a></li>
+            <li><a href="#">园区查看</a></li>
+        </ol>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box">
+            <div class="box-header">
+                <div class="box-name">
+                    <button id="addVillageBtn" class="btn btn-info">添加园区</button>
+                </div>
+                <div class="box-icons">
+                    <a class="expand-link">
+                        <i class="fa fa-expand"></i>
+                    </a>
+                </div>
+                <div class="no-move"></div>
+            </div>
+            <div class="box-content no-padding">
+                <table class="table table-bordered table-striped table-hover table-heading table-datatable"
+                       id="villageListTable">
+                    <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>园区编号</th>
+                        <th>园区名称</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <th>序号</th>
+                        <th>园区编号</th>
+                        <th>园区名称</th>
+                        <th>操作</th>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" role="dialog" id="addVillageModel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="gridSystemModalLabel">增加园区</h4>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <form id="addVillageForm" method="post" class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">园区编号</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="code"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">园区名称</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="name"/>
+                                    </div>
+                                </div>
+                                <div class="form-group has-feedback">
+                                    <label class="col-sm-2 control-label">输入描述(可选)</label>
+                                    <div class="col-sm-8">
+                                        <textarea name="description" class="form-control" id="description" rows="3"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-9 col-sm-offset-2">
+                                        <button type="submit" class="btn btn-primary">提交</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <form id="uploadVillageForm" action="" class="form-horizontal">
+                                <fieldset>
+                                    <legend>批量导入园区信息</legend>
+                                    <br/>
+                                    <input type="file" name="file"/>
+                                    <br/>
+                                    <input type="button" class="btn btn-primary" id="submitBtn" value="提交"/>
+                                </fieldset>
+                            </form>
+                            <div class="row">
+                                <div class="col-md-12" id="importInfo">
+                                    <h4 id="countArea"></h4>
+                                    <div style="max-height:400px;overflow: auto;">
+                                        <ol id="errorArea">
+
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<script type="text/javascript">
+    var editTable;//全局的datatable变量
+
+    $("#submitBtn").click(function(){
+        var formData = new FormData($("#uploadVillageForm")[0]);
+        $(this).attr("disabled","disabled");
+        $("#importInfo #countArea").html("");
+        $("#importInfo #errorArea").html('<button class="btn btn-danger btn-app btn-circle" type="button">' +
+                '<i class="fa fa-spinner fa-spin"></i></button>');
+        $.ajax({
+            url: urlConfig.villageImport ,
+            type: 'POST',
+            data: formData,
+            async: true,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (result) {
+                if(result.status)
+                {
+                    var html="";
+                    var coutInfo="<font color='green'>成功条数:"+result.jsonString.succNum+
+                            "</font>/<font color='red'>失败条数:"+result.jsonString.errorNum+
+                            "</font>";
+                    $("#importInfo #countArea").html(coutInfo);
+                    var errors=result.jsonString.errorDescription;
+                    if(errors!=null&&errors!="")
+                    {
+                        $.each(errors,function(k,v){
+                            html+="<li>"+v+"</li>"
+                        });
+                    }
+                    $("#importInfo #errorArea").html(html);
+                }
+                else
+                {
+                    alert(result.errorMsg.description);
+                    $("#importInfo #errorArea").html("");
+                }
+                $("#submitBtn").removeAttr("disabled");
+                console.log(result);
+            },
+            error: function () {
+                alert("服务器连接失败,请重试!");
+                $("#submitBtn").removeAttr("disabled");
+                $("#importInfo #errorArea").html("");
+            }
+        });
+    });
+
+    $('#villageListTable tbody').on( 'click', 'button#delRowBtn', function () {
+        var data = editTable.row($(this).parents('tr') ).data();
+        var con=confirm("确定该删除该园区?");
+        if(con) {
+            $.ajax({
+                type: "get",
+                async: true,
+                url: urlConfig.deleteVillage + data.id,
+                dataType: "json", //返回数据形式为json
+                success: function (result) {
+                    if (result.status) {
+                        editTable.ajax.reload(null, false);
+                        alert("删除成功");
+                    }
+                    else {
+                        alert(result.errorMsg.description);
+                    }
+                },
+                error: function () {
+                    alert("服务器连接失败,请重试!");
+                }
+            });
+        }
+    });
+
+
+    //增加园区
+    $("#addVillageBtn").click(function(){
+        $("#addVillageModel").modal("show");
+    });
+    function villageAddValidator() {
+        $('#addVillageForm').bootstrapValidator({
+            message: '存在非法输入',
+            fields: {
+                name: {
+                    validators: {
+                        notEmpty: {
+                            message: '园区名称不能为空'
+                        }
+                    }
+                },
+                code:{
+                    validators: {
+                        notEmpty: {
+                            message: '园区编号不能为空'
+                        },
+                        regexp: {
+                            regexp: /^[0-9A-Za-z]+$/,
+                            message: '园区编号只能为数字和字母的组合'
+                        }
+                    }
+                }
+            }
+        }).on("success.form.bv",function(e){
+            e.preventDefault();
+            submitForm();
+        });
+    }
+    function submitForm()
+    {
+        var data=$("#addVillageForm").serializeArray();
+        console.log(data);
+        $.ajax({
+            type: "post",
+            async: true,
+            url: urlConfig.addVillage,
+            data: data,
+            dataType: "json", //返回数据形式为json
+            success: function (result) {
+                if (result.status) {
+                    alert("添加成功");
+                    $("#addVillageModel").modal("hide");
+                    editTable.ajax.reload( null, false );
+                }
+                else
+                {
+                    alert(result.errorMsg.description);
+                }
+            },
+            error: function () {
+                alert("服务器连接失败,请重试!");
+            }
+        });
+    }
+
+
+    //初始化表格数据
+    function initDataTable(){
+        editTable=$('#villageListTable').DataTable({
+            "processing":true,
+            "serverSide": true,
+            "ajax":{
+                "url": urlConfig.villageList,
+                "dataSrc": "jsonString"
+            },
+            "columnDefs": [{
+                "targets": 0,
+                "data":null,
+                "orderable": false,
+                "searchable": false,
+                "createdCell": function (nTd, sData, oData, iRow, iCol) {
+                    var startnum=this.api().page()*(this.api().page.info().length);
+                    $(nTd).html(iRow+1+startnum);
+                }
+            },{
+                "targets": 1,
+                "data": "code",
+                "orderable": false,
+                "searchable": false
+
+            },{
+                "targets": 2,
+                "data": "name",
+                "orderable": false,
+                "searchable": false
+
+            },{
+                "targets": 3,//删除
+                "data": null,
+                "orderable": false,
+                "searchable": false,
+                "defaultContent":
+                "<button id='delRowBtn' class='btn btn-primary' type='button'>删除</button>"
+            }
+            ],
+            "aaSorting": [[ 0, "desc" ]],
+            "autoWidth":false,
+            "sDom":
+                    "<'box-content'<'col-sm-6'f><'col-sm-6 text-right'l><'clearfix'>>rt<'box-content'<'col-sm-6'i><'col-sm-6 text-right'p><'clearfix'>>",
+            "language": {
+                "emptyTable":     "没有相关数据",
+                "info": "显示 _START_ 到 _END_ 条, 共 _TOTAL_ 条记录",
+                "infoEmpty":      "没有相关数据",
+                "infoFiltered":   "(筛选自 _MAX_ 条记录)",
+                "infoPostFix":    "",
+                "thousands":      ",",
+                "lengthMenu":     "每页显示 _MENU_ 条",
+                "loadingRecords": "加载中",
+                "processing":     "数据处理中",
+                "search":         "搜索:",
+                "zeroRecords":    "没有找到匹配数据",
+                "paginate": {
+                    "first":      "首页",
+                    "last":       "末页",
+                    "next":       "下一页",
+                    "previous":   "上一页"
+                },
+                "aria": {
+                    "sortAscending":  ":正序",
+                    "sortDescending": ":倒序"
+                }
+            }
+        });
+
+    }
+    $(document).ready(function() {
+        LoadDataTablesScripts(initDataTable);
+        LoadBootstrapValidatorScript(villageAddValidator);
+//        LoadSelect2Script(yunPassListSelect2);
+    });
+</script>

@@ -1,0 +1,21 @@
+<component name="libraryTable">
+  <library name="Maven: org.apache.tomcat:tomcat-catalina:8.0.22">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/tomcat-catalina/8.0.22/tomcat-catalina-8.0.22.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/tomcat-catalina/8.0.22/tomcat-catalina-8.0.22-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar:///opt/apache-tomcat-8.0.22/src/apache-tomcat-8.0.24-src.zip!/apache-tomcat-8.0.24-src/java" />
+      <root url="jar:///opt/apache-tomcat-8.0.22/src/apache-tomcat-8.0.24-src.zip!/apache-tomcat-8.0.24-src/modules/jdbc-pool/src/main/java" />
+      <root url="jar:///opt/apache-tomcat-8.0.22/src/apache-tomcat-8.0.24-src.zip!/apache-tomcat-8.0.24-src/modules/jdbc-pool/src/test/java" />
+      <root url="jar:///opt/apache-tomcat-8.0.22/src/apache-tomcat-8.0.24-src.zip!/apache-tomcat-8.0.24-src/test" />
+      <root url="jar:///opt/apache-tomcat-8.0.22/src/apache-tomcat-8.0.24-src.zip!/apache-tomcat-8.0.24-src/webapps/docs/appdev/sample/src" />
+      <root url="jar:///opt/apache-tomcat-8.0.22/src/apache-tomcat-8.0.24-src.zip!/apache-tomcat-8.0.24-src/webapps/examples/WEB-INF/classes" />
+      <root url="jar:///opt/apache-tomcat-8.0.22/src/apache-tomcat-8.0.24-src.zip!/apache-tomcat-8.0.24-src/webapps/examples/WEB-INF/jsp/applet" />
+      <root url="jar:///opt/apache-tomcat-8.0.22/src/apache-tomcat-8.0.24-src.zip!/apache-tomcat-8.0.24-src/webapps/examples/jsp/plugin/applet" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/tomcat-catalina/8.0.22/tomcat-catalina-8.0.22-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

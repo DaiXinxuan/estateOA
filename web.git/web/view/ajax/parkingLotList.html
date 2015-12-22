@@ -1,0 +1,581 @@
+<div class="row">
+    <div id="breadcrumb" class="col-md-12">
+        <ol class="breadcrumb">
+            <li><a href="#">车位管理</a></li>
+            <li><a href="#">车位信息</a></li>
+        </ol>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box">
+            <div class="box-header">
+                <div class="box-name">
+                    <button id="addParkLotBtn" class="btn btn-info">添加车位</button>
+                </div>
+                <div class="box-icons">
+                    <a class="expand-link">
+                        <i class="fa fa-expand"></i>
+                    </a>
+                </div>
+                <div class="no-move"></div>
+            </div>
+            <div class="box-content no-padding">
+                <div class="box-content" style="padding-bottom:0px;padding-left: 30px">
+                    <div class="row" id="filterArea">
+                        <div class="col-md-3">
+                            <label for="villageList">所属园区</label>
+                            <select name="villageId" class="villageList">
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="brakeList">选择道闸</label>
+                            <select name="brakeId" class="brakeList">
+                                <option value=''>--所有道闸--</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="parkLotType">车位类型</label>
+                            <select name="parkLotType" id="parkLotType">
+                                <option value="">所有类型</option>
+                                <option value="1">小型车位</option>
+                                <option value="2">中型车位</option>
+                                <option value="3">大型车位</option>
+                            </select>
+                            <button id="doFilterBtn">确定</button>
+                        </div>
+                    </div>
+                </div>
+                <table class="table table-bordered table-striped table-hover table-heading table-datatable"
+                       id="parkingLotListTable">
+                    <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>车位编号</th>
+                        <th>车位地址</th>
+                        <th>车位类型</th>
+                        <th>所属道闸</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <th>序号</th>
+                        <th>车位编号</th>
+                        <th>车位地址</th>
+                        <th>车位类型</th>
+                        <th>所属道闸</th>
+                        <th>操作</th>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" role="dialog" id="parkLotAddModel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="gridSystemModalLabel">添加车位</h4>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <form class="form-horizontal" id="parkLotAddForm">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">选择园区</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control villageList" name="villageId" id="villageList"></select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">选择道闸</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control brakeList" name="brakeId" id="brakeList"></select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">车位编号</label>
+                                <div class="col-sm-8">
+                                    <input type="text" name="code" class="form-control" placeholder="">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">车位类型</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control" name="type" id="type">
+                                        <option value="1">小型车位</option>
+                                        <option value="2">中型车位</option>
+                                        <option value="3">大型车位</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">车位地址</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="location"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">描述</label>
+                                <div class="col-sm-8">
+                                        <textarea name="description" placeholder="可选填" id="" class="form-control"
+                                                  rows="4"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-2">
+                                    <button type="submit" class="btn btn-primary">确认</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade" role="dialog" id="parkLotEditModal">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">编辑车位信息</h4>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <fieldset>
+                            <legend>绑定用户列表</legend>
+                            <ul class="list-group" id="ownerInfo">
+
+                            </ul>
+                        </fieldset>
+                        <form id="ownerAddForm" method="post" class="form-horizontal">
+                            <fieldset>
+                                <legend>添加绑定</legend>
+                                <div class="form-group">
+                                    <div class="col-sm-6">
+                                        <input type="hidden" class="form-control" id="plId" name="plId" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">选择角色</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" name="ownerType">
+                                            <option value="1">业主</option>
+                                            <option value="2">使用者</option>
+                                            <option value="3">租用用户</option>
+                                            <option value="4">临时用户</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">电话号码</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="ownerPhone" />
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <div class="form-group">
+                                <div class="col-sm-9 col-sm-offset-2">
+                                    <button type="submit" class="btn btn-primary">确定添加</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<script type="text/javascript">
+    var editTable;//全局的datatable变量
+    $("#doFilterBtn").click(function(){
+        editTable.draw();
+    });
+    $(".villageList").change(function()
+    {
+        var villageId=$(this).val();
+        if(villageId!="")
+        $.ajax({
+            type: "post",
+            async: true,
+            url: urlConfig.getBrakeListByVillageID+villageId,
+            dataType: "json",
+            success: function (result) {
+                if (result.status) {
+                    if(result.jsonString!=null)
+                    {
+                        var options="<option value=''>--所有道闸--</option>";
+                        for(var i in result.jsonString)
+                        {
+                            options+="<option value='"+result.jsonString[i].id+"'>"+result.jsonString[i].text+"</option>";
+                        }
+                        $(".brakeList").html(options);
+                    }
+                    else
+                    {
+                        $(".brakeList").html("<option value=''>--没有相应的道闸--</option>");
+                    }
+                }
+                else
+                {
+                    $(".brakeList").html("<option value=''>"+result.errorMsg.description+"</option>");
+                }
+            },
+            error: function () {
+                $(".brakeList").html("<option value=''>网络连接失败</option>");
+            }
+        });
+    });
+
+
+    $("#parkingLotListTable tbody").on('click', 'button#delRowBtn',function() {
+        var data = editTable.row($(this).parents('tr') ).data();
+        var con=confirm("确定删除该车位?");
+        if(con) {
+            $.ajax({
+                type: "get",
+                async: false,
+                url: urlConfig.parkLotDelete + data.id,
+                dataType: "json", //返回数据形式为json
+                success: function (result) {
+                    if (result.status) {
+                        editTable.ajax.reload(null, false);
+                        alert("删除成功");
+                    }
+                    else {
+                        alert(result.errorMsg.description);
+                    }
+                },
+                error: function () {
+                    alert("服务器连接失败,请重试!");
+                }
+            });
+        }
+    });
+
+    //设置车位的用户角色
+    $("#parkingLotListTable tbody").on('click', 'button#editRowBtn',function(){
+        $("#ownerAddForm")[0].reset();
+        var data = editTable.row($(this).parents('tr') ).data();
+        console.log(data);
+        $("#parkLotEditModal").modal("show");
+        $("#plId").val(data.id);
+
+        $.ajax({
+            type: "get",
+            async: true,
+            url: urlConfig.parkLotOwner+data.id,
+            dataType: "json",
+            success: function (result) {
+                if (result.status) {
+                    if(result.jsonString!=null)
+                    {
+                        var html="";
+                        for(var i in result.jsonString)
+                        {
+                            if(result.jsonString[i].ownerType==1)
+                                result.jsonString[i].ownerType="业主";
+                            else if(result.jsonString[i].ownerType==2)
+                                result.jsonString[i].ownerType="使用者";
+                            else if(result.jsonString[i].ownerType==3)
+                                result.jsonString[i].ownerType="月租用户";
+                            else if(result.jsonString[i].ownerType==4)
+                                result.jsonString[i].ownerType="临时用户";
+                            html+='<li id="bind'+result.jsonString[i].id+'" class="list-group-item">'+
+                                    result.jsonString[i].ownerPhone+'-'+result.jsonString[i].ownerType+
+                                    '<a class="btn-warning btn-sm" id="deleteOwnerBtn" href="javascript:deleteOwner('+
+                                    result.jsonString[i].id+');">&ensp;解除绑定</a>'+
+                                    '</li>';
+                        }
+                        $("#ownerInfo").html(html);
+                    }
+                    else
+                    {
+                        $("#ownerInfo").html("");
+                    }
+                }
+                else
+                {
+                    alert(result.errorMsg.description);
+                }
+            },
+            error: function () {
+                alert("服务器连接失败,请重试!");
+            }
+        });
+    });
+
+    function deleteOwner(id)
+    {
+        var con=confirm("确定解除该绑定关系?");
+        if(con) {
+            $.ajax({
+                type: "get",
+                async: true,
+                url: urlConfig.deleteParkLotOwnerBind+id,
+                dataType: "json", //返回数据形式为json
+                success: function (result) {
+                    if (result.status) {
+                        alert("操作成功");
+                        $("#bind"+id).remove();
+                    }
+                    else {
+                        alert("删除失败\n"+result.errorMsg.description);
+                    }
+                },
+                error: function () {
+                    alert("服务器连接失败,请重试!");
+                }
+            });
+        }
+    }
+
+    function ownerAddValidator(){
+        $('#ownerAddForm').bootstrapValidator({
+            message: '存在非法输入',
+            fields: {
+                ownerPhone: {
+                    validators: {
+                        notEmpty: {
+                            message: '电话号码不能为空'
+                        },
+                        regexp: {
+                            regexp: /^1[3-8][0-9]{9}$/,
+                            message: '电话号码不合法'
+                        }
+                    }
+                }
+            }
+        }).on("success.form.bv",function(e){
+            e.preventDefault();
+            submitOwnerForm();
+        });
+    }
+    function submitOwnerForm()
+    {
+        var data=$("#ownerAddForm").serializeArray();
+        console.log(data);
+        $.ajax({
+            type: "post",
+            async: true,
+            url: urlConfig.addParkLotOwner,
+            data: data,
+            dataType: "json", //返回数据形式为json
+            success: function (result) {
+                if (result.status) {
+                    var html='<li id="bind'+result.jsonString.id+'" class="list-group-item">'+
+                            result.jsonString.ownerPhone+
+                            '<a class="btn-warning btn-sm" id="deleteOwnerBtn" href="javascript:deleteOwner('+
+                            result.jsonString.id+');">解除绑定</a>'+
+                            '</li>';
+                    $("#ownerInfo").append(html);
+                    $("#ownerAddForm")[0].reset();
+                }
+                else
+                {
+                    alert(result.errorMsg.description);
+                }
+            },
+            error: function () {
+                alert("服务器连接失败,请重试!");
+            }
+        });
+    }
+
+
+
+    //增加车位
+    $("#addParkLotBtn").click(function(){
+        $("#parkLotAddModel").modal("show");
+    });
+
+    function parkLotAddAddValidator() {
+        $('#parkLotAddForm').bootstrapValidator({
+            message: '存在非法输入',
+            fields: {
+                villageId: {
+                    validators: {
+                        notEmpty: {
+                            message: '请选择园区'
+                        }
+                    }
+                },
+                brakeId: {
+                    validators: {
+                        notEmpty: {
+                            message: '请选择道闸'
+                        }
+                    }
+                },
+                code: {
+                    validators: {
+                        notEmpty: {
+                            message: '车位编号不能为空'
+                        },
+                        regexp: {
+                            regexp: /^[0-9A-Za-z]+$/,
+                            message: '道闸编号只能为数字和字母的组合'
+                        }
+                    }
+                },
+                location: {
+                    validators: {
+                        notEmpty: {
+                            message: '请输入车位地址'
+                        }
+                    }
+                }
+            }
+        }).on("success.form.bv",function(e){
+            e.preventDefault();
+            submitForm();
+        });
+    }
+    function submitForm()
+    {
+        var data=$("#parkLotAddForm").serializeArray();
+        $.ajax({
+            type: "post",
+            async: true,
+            url: urlConfig.parkLotAdd,
+            data: data,
+            dataType: "json", //返回数据形式为json
+            success: function (result) {
+                if (result.status) {
+                    alert("添加成功");
+                    editTable.ajax.reload( null, false );
+                }
+                else
+                {
+                    alert(result.errorMsg.description);
+                }
+            },
+            error: function () {
+                alert("服务器连接失败,请重试!");
+            }
+        });
+    }
+
+    function initDataTable(){
+        editTable=$('#parkingLotListTable').DataTable({
+            "processing":true,
+            "serverSide": true,
+            "ajax":{
+                "url": urlConfig.parkLotList,
+                "data":function ( d ) {
+                    d.villageId=$("#filterArea .villageList option:selected").val();
+                    d.type = $("#filterArea #parkLotType option:selected").val();
+                    d.controlId = $("#filterArea .brakeList option:selected").val();
+                },
+                "dataSrc": "jsonString"
+            },
+            "columnDefs":[
+                {
+                    "targets": 0,
+                    "data":null,
+                    "orderable": false,
+                    "searchable": false,
+                    "createdCell": function (nTd, sData, oData, iRow, iCol) {
+                        var startnum=this.api().page()*(this.api().page.info().length);
+                        $(nTd).html(iRow+1+startnum);
+                    }
+                },{
+                    "targets": 1,
+                    "data": "code",
+                    "orderable": false,
+                    "searchable": false
+
+                },{
+                    "targets": 2,
+                    "data": "location",
+                    "orderable": false,
+                    "searchable": false
+
+                },{
+                    "targets": 3,
+                    "data": "type",
+                    "orderable": false,
+                    "searchable": false,
+                    "render": function ( data, type, row ) {
+                        if (data==1)
+                            return "<font color='#0000cd'>小型车位</font>";
+                        else if (data==2)
+                            return "<font color='#b8860b'>中型车位</font>";
+                        else if(data==3)
+                            return "<font color='#d2691e'>大型车位</font>";
+                        else
+                            return "<font color='red'>数据异常("+data+")</font>"
+                    }
+
+                },{
+                    "targets": 4,
+                    "data": "brakeEntity",
+                    "orderable": false,
+                    "searchable": false,
+                    "render": function ( data, type, row ) {
+                        if(data!=null&&data!="") {
+                            return data.code + "--" + data.name;
+                        }
+                    }
+                },{
+                    "targets": 5,
+                    "data": null,
+                    "orderable": false,
+                    "searchable": false,
+                    "defaultContent":
+                            "<button id='editRowBtn' class='btn btn-primary' type='button'>编辑</button>&ensp;"+
+                            "<button id='delRowBtn' class='btn btn-primary' type='button'>删除</button>"
+                }
+
+            ],
+            "autoWidth":false,
+            "sDom":
+                    "<'box-content'<'col-sm-6'f><'col-sm-6 text-right'l><'clearfix'>>tr<'box-content'<'col-sm-6'i><'col-sm-6 text-right'p><'clearfix'>>",
+            "language": {
+                "emptyTable":     "没有相关数据",
+                "info": "显示 _START_ 到 _END_ 条, 共 _TOTAL_ 条记录",
+                "infoEmpty":      "没有相关数据",
+                "infoFiltered":   "(筛选自 _MAX_ 条记录)",
+                "infoPostFix":    "",
+                "thousands":      ",",
+                "lengthMenu":     "每页显示 _MENU_ 条",
+                "loadingRecords": "加载中",
+                "processing":     "数据处理中",
+                "search":         "搜索:",
+                "zeroRecords":    "没有找到匹配数据",
+                "paginate": {
+                    "first":      "首页",
+                    "last":       "末页",
+                    "next":       "下一页",
+                    "previous":   "上一页"
+                },
+                "aria": {
+                    "sortAscending":  ":正序",
+                    "sortDescending": ":倒序"
+                }
+            }
+        });
+
+    }
+    $(document).ready(function() {
+        initVillageSelect();
+        LoadDataTablesScripts(initDataTable);
+        LoadBootstrapValidatorScript(parkLotAddAddValidator);
+        LoadBootstrapValidatorScript(ownerAddValidator);
+    });
+</script>
